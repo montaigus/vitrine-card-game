@@ -1,8 +1,10 @@
 // initialization des constantes
 const colors = ['♠', '♥', '♦', '♣'];
+
 let powers = [];
 let players = [];
-let globalPlaces = {
+let globalCards = {
+  deck: [],
   game: [],
   waste: [],
 };
@@ -31,10 +33,10 @@ const cardGenerator = (color, power) => {
 const playerGenerator = (name) => {
   return {
     name,
-    places: {
+    cards: {
       hand: [],
       openedWindow: [],
-      closeedWindow: [],
+      closedWindow: [],
     },
     playing: false,
   }
@@ -60,10 +62,41 @@ const deckGenerator = () => {
   return deckGenerated;
 };
 
-// init deck
-const completeDeck = deckGenerator();
+const moveCard = (cardToMove, from, to) => {
+  
+  // comment trouver la carte
+  const cardSelector = card => card.color === cardToMove.color && card.power === cardToMove.power;
+  
+  // infos de la carte
+  const movingCard = {
+    index: from.findIndex(cardSelector),
+    value: from.find(cardSelector),
+  };
+  
+  // carte introuvable
+  if (movingCard.value === -1) {
+    console.error('Carte non trouvée!!');
+    
+    return;
+  }
+  
+  console.log(movingCard);
+  
+  // retirer cette carte de from
+  from.splice(movingCard.index, 1);
+  // mettre cette carte dans la liste to
+  to.push(movingCard.value);
+  
+  return true;
+}
+
 // mélange du deck
-let gameDeck = completeDeck.sort(() => 0.5 - Math.random());
+globalCards.deck = deckGenerator().sort(() => 0.5 - Math.random());
+
+// DEBUG
+
+players = [playerGenerator('Roméo'), playerGenerator('Xavier')];
+
 
 // initialisation du jeu
 const distributeCards = () => {
@@ -73,21 +106,26 @@ const distributeCards = () => {
     return;
   }
   
+  console.table('new players', players);
+  
   const initializedPlayers = players.map(player => {
+    
     // distribue les vitrines et la main
-    for (let i =1; i<=3; i++) {    
-      player.hand.push(completeDeck.pop());
-      player.vitrineOuverte.push(completeDeck.pop());
-      player.vitrineFermee.push(completeDeck.pop());
+    for (let i =1; i<=3; i++) {          
+      // main
+      moveCard(globalCards.deck[0], globalCards.deck, player.cards.hand);
+      // vitrine ouverte
+      moveCard(globalCards.deck[0], globalCards.deck, player.cards.openedWindow);
+      // vitrine fermée
+      moveCard(globalCards.deck[0], globalCards.deck, player.cards.closedWindow);
     }
     
     return player;
   });
   
-  console.table(initializedPlayers);
+  console.log('initializedPlayers', initializedPlayers);
 
   const quiCommence = initializedPlayers[Math.floor(Math.random()*initializedPlayers.length)];
-  console.log(quiCommence);
   
   quiCommence.playing = true;
   
