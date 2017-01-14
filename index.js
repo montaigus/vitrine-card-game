@@ -17,13 +17,29 @@ for(let i = 0; i <= 13; i++) {
 
 const specialPowers = {
   
-  10: {
-    test: function(previousCard) {
-      return previousCard.power !== 7; // le 10 ne peut pas être posé sur un 7
+  8: {
+    specialPower() {
+      // TODO passe le tour du joueur suivant
     }
-    power: function() {
+  },
+    
+  9: {
+    specialPower() {
+      // TODO changement de sens du tour
+    }
+  },
+    
+  10: {
+    specialPower() {
       moveCard(globalCards.game, globalCards.game, globalCards.waste);
       // TODO rejouer
+    }
+  },
+    
+  15: {
+    specialPower() {
+      // TODO donne la valeur de la carte du choix dans la vitrine cachée
+      // TODO passe le tour
     }
   },
     
@@ -39,8 +55,30 @@ const cardGenerator = (color, power) => {
     color,
     power,
     name,
-    test,
-    specialPower,
+    // playableTest(previousCard) {
+    //   const specialCard = specialPowers[power];
+    //   
+    //   // si la carte courante à un pouvoir special ET a une fonction de playableTest
+    //   if(specialCard && specialCard.playableTest) {
+    //     const playableTestResult = specialCard.playableTest(previousCard);
+    //     
+    //     if (!playableTestResult.continueTest) {
+    //       return playableTestResult.value;
+    //     }
+    //   }
+    //   // logique de base de comparaison des cartes
+    //   
+    // },
+    applySpecialPower() {
+      const specialCard = specialPowers[power];
+      
+      // the card is a special card
+      if (specialCard && specialCard.specialPower) {
+        return specialCard.specialPower();
+      }
+      // no special power
+      return false;
+    },
     equals(otherCard) {
       return this.color === otherCard.color && this.power === otherCard.power;
     },
@@ -167,10 +205,10 @@ const playCard = (player, cards) => {
 
   cards.map(card => moveCard(card, player.card.hand, globalCards.game));
 
-  applyPower(cards[0]);
+  cards[0].applySpecialPower();
 
   if (globalCards.deck.length !== 0 && player.card.hand.length < 3) {
-moveCard(globalCards.deck[0], globalCards.deck, player.cards.hand);
+    moveCard(globalCards.deck[0], globalCards.deck, player.cards.hand);
   }
 
 }
