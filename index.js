@@ -15,6 +15,19 @@ for(let i = 0; i <= 13; i++) {
   powers[i] = i+2;
 }
 
+const specialPowers = {
+  
+  10: {
+    test: function(previousCard) {
+      return previousCard.power !== 7; // le 10 ne peut pas être posé sur un 7
+    }
+    power: function() {
+      moveCard(globalCards.game, globalCards.game, globalCards.waste);
+      // TODO rejouer
+    }
+  },
+    
+}
 
 // générateur de cartes
 const cardGenerator = (color, power) => {
