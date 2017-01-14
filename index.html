@@ -35,8 +35,16 @@
     };
   };
 
-  const roiPique = cardGenerator(colors[0], 13);
-  
+  // générateur de joueur  
+  const playerGenerator = (name) => {
+    return {
+      name,
+      hand:[],
+      vitrine:[],
+      playing:false,
+    }
+  }
+
   // générateur de deck
   const deckGenerator = () => {
     
@@ -61,6 +69,12 @@
   
   const shuffledDeck = completeDeck.sort(() => 0.5 - Math.random());
 
+  
+
+  const distributeToHand = (player) => {
+    player.hand.push(completeDeck.pop()); 
+  }
+
   console.table(shuffledDeck);
 
   const bouton = document.querySelector('button[id="clickme"]');
@@ -71,8 +85,7 @@
 
     alert(`Tu as tiré: ${card.name} ${card.power === 14 ? `!!!` : `de`} ${card.color}`);
   });
-  
-  
+    
   
 </script>
 </html>
