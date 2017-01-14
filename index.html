@@ -6,12 +6,71 @@
 	<title>Le jeu de la Vitrine</title>
 </head>
 <body>
-	<button id='clickme'>Click me !</button>
+	<button id='clickme'>Tire une carte !</button>
 </body>
 <script type="text/javascript">
 	console.log('ça marche');
-	const bouton = document.querySelector('button[id="clickme"]');
-	bouton.addEventListener('click', () => alert('Tu m\'a cliqué batard'));
+  
+  const colors = ['♠', '♥', '♦', '♣'];
+  const powers = [];
 
+  for(let i = 0; i <= 12; i++) {
+    powers[i] = i+1;
+  }
+
+  // générateur de cartes
+  const cardGenerator = (color, power) => {
+    const specials = ['Valet', 'Dame', 'Roi', 'Joker'];
+    
+    let name = power;
+
+    if (power > 10) {
+      name = specials[power-11];
+    }
+
+    return {
+      color,
+      power,
+      name
+    };
+  };
+
+  const roiPique = cardGenerator(colors[0], 13);
+  
+  // générateur de deck
+  const deckGenerator = () => {
+    
+    let deck = [];
+
+    // map sur chaque couleur pour créer ses cartes
+    colors.map(color => {
+      // map sur chaque pouvoir pour cette couleur
+      const completePart = powers.map(power => {
+        return deck.push(cardGenerator(color, power));
+      });
+    });
+    
+    // ajouter les jokers
+    deck.push(cardGenerator('🤡', 14));
+    deck.push(cardGenerator('🤡', 14));
+
+    return deck;
+  };
+
+  const completeDeck = deckGenerator();
+
+  console.table(completeDeck);
+
+  const bouton = document.querySelector('button[id="clickme"]');
+  bouton.addEventListener('click', () => {
+    const cardIndex = parseInt(Math.random() * 54 + 1);
+
+    const card = completeDeck[cardIndex];
+
+    alert(`Tu as tiré: ${card.name} ${card.power === 14 ? `!!!` : `de`} ${card.color}`);
+  });
+  
+  
+  
 </script>
 </html>
