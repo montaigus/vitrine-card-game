@@ -1,107 +1,13 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html  xmlns="http://www.w3.org/1999/xhtml" xml:lang="fr">
-   <head>      
-    <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-
+<head>      
+  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
 	<title>Le jeu de la Vitrine</title>
 </head>
 <body>
 	<button id='clickme'>Commencer !</button>
   <button id='addPlayer'>Ajouter un joueur</button>
 </body>
-<script type="text/javascript">
-	  
-  const colors = ['♠', '♥', '♦', '♣'];
-  const powers = [];
-  const players = [];
-
-  for(let i = 0; i <= 12; i++) {
-    powers[i] = i+1;
-  }
-
-let lesJoueurs = [];
-
-  // générateur de cartes
-  const cardGenerator = (color, power) => {
-    const specials = ['Valet', 'Dame', 'Roi', 'Joker'];
-    
-    let name = power;
-
-    if (power > 10) {
-      name = specials[power-11];
-    }
-
-    return {
-      color,
-      power,
-      name
-    };
-  };
-
-  // générateur de joueur  
-  const playerGenerator = (name) => {
-    return {
-      name,
-      hand:[],
-      vitrineOuverte:[],
-      vitrineFermee:[],
-      playing:false,
-    }
-  }
-
-  // générateur de deck
-  const deckGenerator = () => {
-    
-    let deck = [];
-
-    // map sur chaque couleur pour créer ses cartes
-    colors.map(color => {
-      // map sur chaque pouvoir pour cette couleur
-      const completePart = powers.map(power => {
-        return deck.push(cardGenerator(color, power));
-      });
-    });
-    
-    // ajouter les jokers
-    deck.push(cardGenerator('🤡', 14));
-    deck.push(cardGenerator('🤡', 14));
-
-    return deck;
-  };
-
-  const completeDeck = deckGenerator();
-  
-  const shuffledDeck = completeDeck.sort(() => 0.5 - Math.random());
-
-//Bouton ajouter joueur
-  const boutonAddPlayer = document.querySelector('button[id="addPlayer"]');
-  boutonAddPlayer.addEventListener('click', () => {
-    const playerName = window.prompt('Entrez votre nom de joueur', '');
-    if (playerName !== null) players.push(playerGenerator(playerName));
-  });
-    
-//Initialisation du jeu
-const initializeGame = () => {
-  if (players.length === 0) return;
-  const initializedPlayers = players.map(player => {
-    for (let i =1; i<=3; i++) {    
-      player.hand.push(completeDeck.pop());
-      player.vitrineOuverte.push(completeDeck.pop());
-      player.vitrineFermee.push(completeDeck.pop());
-    }
-    return player;
-  })
-console.table(initializedPlayers);
-
-  const quiCommence = initializedPlayers[Math.floor(Math.random()*initializedPlayers.length)];
-  console.log(quiCommence);
-  quiCommence.playing = true;
-  lesJoueurs = initializedPlayers;
-}
-
-  const boutonCommencer = document.querySelector('button[id="clickme"]');
-  boutonCommencer.addEventListener('click', initializeGame);
-
-  
-</script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/6.18.1/babel.min.js"></script>
+<script src="index.js" data-presets="es2015,stage-3"> </script>
 </html>
