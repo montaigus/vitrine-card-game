@@ -58,8 +58,10 @@
   };
 
   const completeDeck = deckGenerator();
+  
+  const shuffledDeck = completeDeck.sort(() => 0.5 - Math.random());
 
-  console.table(completeDeck);
+  console.table(shuffledDeck);
 
   const bouton = document.querySelector('button[id="clickme"]');
   bouton.addEventListener('click', () => {
