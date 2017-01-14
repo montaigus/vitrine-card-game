@@ -6,18 +6,20 @@
 	<title>Le jeu de la Vitrine</title>
 </head>
 <body>
-	<button id='clickme'>Tire une carte !</button>
+	<button id='clickme'>Commencer !</button>
   <button id='addPlayer'>Ajouter un joueur</button>
 </body>
 <script type="text/javascript">
-	console.log('ça marche');
-  
+	  
   const colors = ['♠', '♥', '♦', '♣'];
   const powers = [];
+  const players = [];
 
   for(let i = 0; i <= 12; i++) {
     powers[i] = i+1;
   }
+
+let lesJoueurs = [];
 
   // générateur de cartes
   const cardGenerator = (color, power) => {
@@ -41,7 +43,8 @@
     return {
       name,
       hand:[],
-      vitrine:[],
+      vitrineOuverte:[],
+      vitrineFermee:[],
       playing:false,
     }
   }
@@ -72,24 +75,33 @@
 
 //Bouton ajouter joueur
   const boutonAddPlayer = document.querySelector('button[id="addPlayer"]');
-  boutonAddPlayer.addEventListener('click', funcAddPlayer);
-
-//fonction ajouter joueur
-  function funcAddPlayer = () => {
+  boutonAddPlayer.addEventListener('click', () => {
     const playerName = window.prompt('Entrez votre nom de joueur', '');
     if (playerName !== null) players.push(playerGenerator(playerName));
-  }
+  });
     
 //Initialisation du jeu
 const initializeGame = () => {
+  if (players.length === 0) return;
   const initializedPlayers = players.map(player => {
-    for (let i =1, i<=3, i++) {    
+    for (let i =1; i<=3; i++) {    
       player.hand.push(completeDeck.pop());
       player.vitrineOuverte.push(completeDeck.pop());
       player.vitrineFermee.push(completeDeck.pop());
     }
+    return player;
   })
+console.table(initializedPlayers);
+
+  const quiCommence = initializedPlayers[Math.floor(Math.random()*initializedPlayers.length)];
+  console.log(quiCommence);
+  quiCommence.playing = true;
+  lesJoueurs = initializedPlayers;
 }
+
+  const boutonCommencer = document.querySelector('button[id="clickme"]');
+  boutonCommencer.addEventListener('click', initializeGame);
+
   
 </script>
 </html>
