@@ -152,6 +152,7 @@ const distributeCards = () => {
 
 const playCard = (player, cards) => {
 
+  // Test si les cartes sont toutes les mêmes
   if (cards.filter(card => card.equals(cards[0])) !== cards.length) {
     console.error('Vous avez sélectionné des cartes différentes');
     return;
@@ -166,7 +167,7 @@ const playCard = (player, cards) => {
 
   cards.map(card => moveCard(card, player.card.hand, globalCards.game));
 
-  applyPower(card);
+  applyPower(cards[0]);
 
   if (globalCards.deck.length !== 0 && player.card.hand.length < 3) {
 moveCard(globalCards.deck[0], globalCards.deck, player.cards.hand);
@@ -175,7 +176,15 @@ moveCard(globalCards.deck[0], globalCards.deck, player.cards.hand);
 }
 
 const testAvailableCard = (card) => {
-  if (globalCards.game[globalCards.length].power === 7 )
+  const currentGameCard = globalCards.game[globalCards.length]
+  // Test du 2
+  if (card.power === 2 || card.power === 15) return true;
+  // Test du 7
+  if (currentGameCard.power === 7 && card.power > 7) return false;
+  // Test normal
+  if (card.power < currentGameCard.power) return false;
+
+  return true;
 }
 
 // --------------------------------------------
