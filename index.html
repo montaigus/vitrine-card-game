@@ -7,6 +7,7 @@
 </head>
 <body>
 	<button id='clickme'>Tire une carte !</button>
+  <button id='addPlayer'>Ajouter un joueur</button>
 </body>
 <script type="text/javascript">
 	console.log('ça marche');
@@ -69,23 +70,26 @@
   
   const shuffledDeck = completeDeck.sort(() => 0.5 - Math.random());
 
-  
+//Bouton ajouter joueur
+  const boutonAddPlayer = document.querySelector('button[id="addPlayer"]');
+  boutonAddPlayer.addEventListener('click', funcAddPlayer);
 
-  const distributeToHand = (player) => {
-    player.hand.push(completeDeck.pop()); 
+//fonction ajouter joueur
+  function funcAddPlayer = () => {
+    const playerName = window.prompt('Entrez votre nom de joueur', '');
+    if (playerName !== null) players.push(playerGenerator(playerName));
   }
-
-  console.table(shuffledDeck);
-
-  const bouton = document.querySelector('button[id="clickme"]');
-  bouton.addEventListener('click', () => {
-    const cardIndex = parseInt(Math.random() * 54 + 1);
-
-    const card = completeDeck[cardIndex];
-
-    alert(`Tu as tiré: ${card.name} ${card.power === 14 ? `!!!` : `de`} ${card.color}`);
-  });
     
+//Initialisation du jeu
+const initializeGame = () => {
+  const initializedPlayers = players.map(player => {
+    for (let i =1, i<=3, i++) {    
+      player.hand.push(completeDeck.pop());
+      player.vitrineOuverte.push(completeDeck.pop());
+      player.vitrineFermee.push(completeDeck.pop());
+    }
+  })
+}
   
 </script>
 </html>
