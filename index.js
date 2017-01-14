@@ -38,7 +38,12 @@ const cardGenerator = (color, power) => {
   return {
     color,
     power,
-    name
+    name,
+    test,
+    specialPower,
+    equals(otherCard) {
+      return this.color === otherCard.color && this.power === otherCard.power;
+    },
   };
 };
 
@@ -143,6 +148,34 @@ const distributeCards = () => {
   quiCommence.playing = true;
   
   lesJoueurs = initializedPlayers;
+}
+
+const playCard = (player, cards) => {
+
+  if (cards.filter(card => card.equals(cards[0])) !== cards.length) {
+    console.error('Vous avez sélectionné des cartes différentes');
+    return;
+  }
+
+  const currentGameCard = globalCards.game[globalCards.length];
+
+  if (!testAvailableCard(card[0])) {
+    console.warn('Il n\'est pas possible de jouer ça');
+    return;
+  }
+
+  cards.map(card => moveCard(card, player.card.hand, globalCards.game));
+
+  applyPower(card);
+
+  if (globalCards.deck.length !== 0 && player.card.hand.length < 3) {
+moveCard(globalCards.deck[0], globalCards.deck, player.cards.hand);
+  }
+
+}
+
+const testAvailableCard = (card) => {
+  if (globalCards.game[globalCards.length].power === 7 )
 }
 
 // --------------------------------------------
