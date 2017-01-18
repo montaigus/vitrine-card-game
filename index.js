@@ -11,7 +11,10 @@ let globalCards = {
 
 let lesJoueurs = [];
 
-for(let i = 0; i <= 13; i++) {
+// Sens de jeu : 1 ou -1
+let playingDirection = 1;
+
+for(let i = 0; i <= 12; i++) {
   powers[i] = i+2;
 }
 
@@ -25,13 +28,14 @@ const specialPowers = {
     
   9: {
     specialPower() {
-      // TODO changement de sens du tour
+      // change de sens de jeu
+      playingDirection = playingDirection*-1;
     }
   },
     
   10: {
     specialPower() {
-      moveCard(globalCards.game, globalCards.game, globalCards.waste);
+      moveNumerousCards(globalCards.game, globalCards.game, globalCards.waste);
       // TODO rejouer
     }
   },
@@ -82,6 +86,9 @@ const cardGenerator = (color, power) => {
     equals(otherCard) {
       return this.color === otherCard.color && this.power === otherCard.power;
     },
+    powerEquals(otherCard) {
+      return this.power ===otherCard.power;
+    }
   };
 };
 
@@ -118,15 +125,18 @@ const deckGenerator = () => {
   return deckGenerated;
 };
 
+const moveNumerousCards = (cards, from, to) => {
+  if (typeof cards !== typeof []) return;
+  const tempCards = cards.map(card => card);
+  tempCards.map(card => moveCard(card, from, to));
+}
+
 const moveCard = (cardToMove, from, to) => {
-  
-  // comment trouver la carte
-  const cardSelector = card => card.color === cardToMove.color && card.power === cardToMove.power;
-  
+    
   // infos de la carte
   const movingCard = {
-    index: from.findIndex(cardSelector),
-    value: from.find(cardSelector),
+    index: from.findIndex(card => card.equals(cardToMove)),
+    value: from.find(card => card.equals(cardToMove)),
   };
   
   // carte introuvable
@@ -186,35 +196,39 @@ const distributeCards = () => {
   quiCommence.playing = true;
   
   lesJoueurs = initializedPlayers;
+
+  playATurn(lesJoueurs.find(joueur => joueur.playing));
 }
 
-const playCard = (player, cards) => {
+const playCards = (player, cards) => {
 
   // Test si les cartes sont toutes les mêmes
-  if (cards.filter(card => card.equals(cards[0])) !== cards.length) {
+  if (cards.find(card => !card.powerEquals(cards[0]))) {
     console.error('Vous avez sélectionné des cartes différentes');
     return;
   }
 
   const currentGameCard = globalCards.game[globalCards.length];
 
-  if (!testAvailableCard(card[0])) {
+  if (!testAvailableCard(cards[0])) {
     console.warn('Il n\'est pas possible de jouer ça');
     return;
   }
 
-  cards.map(card => moveCard(card, player.card.hand, globalCards.game));
+  cards.map(card => moveCard(card, player.cards.hand, globalCards.game));
 
   cards[0].applySpecialPower();
 
-  if (globalCards.deck.length !== 0 && player.card.hand.length < 3) {
+
+  while (globalCards.deck.length !== 0 && player.cards.hand.length < 3) {
     moveCard(globalCards.deck[0], globalCards.deck, player.cards.hand);
   }
 
 }
 
 const testAvailableCard = (card) => {
-  const currentGameCard = globalCards.game[globalCards.length]
+  if (globalCards.game.length === 0) return true;
+  const currentGameCard = globalCards.game[globalCards.game.length-1]
   // Test du 2
   if (card.power === 2 || card.power === 15) return true;
   // Test du 7
@@ -223,6 +237,80 @@ const testAvailableCard = (card) => {
   if (card.power < currentGameCard.power) return false;
 
   return true;
+}
+
+const generateDomCard = (color, power) => {
+  let cardElement = document.createElement("div");
+
+  let cardHTML = '<div class="card" data-power="' + power + '" data-color=' + color + '><div class="corner top"><span class="number">' + power + '</span><span>' + color + '</span></div>'
+  if (power === 2 || (power >3 && power <= 10)) cardHTML += '<span class="suit top_left">' + color + '</span>';
+  if (power === 2 || (power >3 && power <= 10)) cardHTML += '<span class="suit top_right">' + color + '</span>';  
+  if (power === 9 || power === 10) cardHTML += '<span class="suit middle_top_left">' + color + '</span>';  
+  if (power === 9 || power === 10) cardHTML += '<span class="suit middle_top_right">' + color + '</span>';
+  if (power === 3 || power === 5 || power === 9) cardHTML += '<span class="suit middle_center">' + color + '</span>';
+  if (power === 6 || power === 7 || power === 8) cardHTML += '<span class="suit middle_left">' + color + '</span>'
+  if (power === 6 || power === 7 || power === 8) cardHTML += '<span class="suit middle_right">' + color + '</span>'
+  if (power === 9 || power === 10) cardHTML += '<span class="suit middle_bottom_left">' + color + '</span>';
+  if (power === 9 || power === 10) cardHTML += '<span class="suit middle_bottom_right">' + color + '</span>';
+  if (power === 2 || (power >3 && power <= 10)) cardHTML += '<span class="suit bottom_left">' + color + '</span>';
+  if (power === 2 || (power >3 && power <= 10)) cardHTML += '<span class="suit bottom_right">' + color + '</span>'; 
+  if (power === 7 || power === 8 || power === 10) cardHTML += '<span class="suit middle_top_center">' + color + '</span>'; 
+  if (power === 7 || power === 8 || power === 10) cardHTML += '<span class="suit middle_bottom_center">' + color + '</span>'; 
+  if (power === 3) cardHTML += '<span class="suit bottom_center">' + color + '</span>';
+  if (power === 3) cardHTML += '<span class="suit top_center">' + color + '</span>';
+  cardHTML += '<div class="corner bottom"><span class="number">' + power + '</span><span>' + color + '</span></div></div>';
+
+cardElement.innerHTML = cardHTML;
+        return cardElement;
+}
+
+
+
+const putDomCard = (color, power) => {
+  const domCard = generateDomCard(color, power);
+  const carpet = document.getElementById('deck');
+  carpet.prepend(domCard);
+}
+
+const nextTurn = () => {
+  playingPlayer = lesJoueurs.find(joueur => joueur.playing);
+  if (playingPlayer) playATurn(playingPlayer);
+}
+
+const playATurn = (player) => {
+
+  alert(player.name + ' : à vous de jouer !');
+
+  if(!player.cards.hand.find(card => testAvailableCard(card))) {
+    alert('Vous ne pouvez jouer aucune carte');
+    moveNumerousCards(globalCards.game, globalCards.game, player.cards.hand)
+    return;
+  }
+
+  let msg = 'Voici vos cartes : '; 
+  player.cards.hand.map(card => msg += card.power + ' de ' + card.color + ', ')
+  /*msg += player.cards.hand[0].power + ' de ' + player.cards.hand[0].color;
+  msg += ', ';
+  msg += player.cards.hand[1].power + ' de ' + player.cards.hand[1].color;
+  msg += ', ';
+  msg += player.cards.hand[2].power + ' de ' + player.cards.hand[2].color;*/
+  msg += '. Lesquelles prennez vous ? on note le numéro -1, séparés par /';
+
+  const cardsText = prompt(msg);
+  if (!cardsText) return;
+
+  const cardsArray = cardsText.split('/');
+
+  if (cardsArray.find(number => parseInt(number) > player.cards.hand.length || parseInt(number) < 0)) {
+    alert('Vous n\'avez pas rentré un nombre correct');
+    return;
+  }
+
+  const cards = cardsArray.map(card => player.cards.hand[parseInt(card)]);
+  if (!cards) return;
+
+  playCards(player, cards);
+
 }
 
 // --------------------------------------------
@@ -240,3 +328,15 @@ boutonAddPlayer.addEventListener('click', () => {
   const playerName = window.prompt('Entrez votre nom de joueur', '');
   if (playerName !== null) players.push(playerGenerator(playerName));
 });
+
+const boutonServir = document.querySelector('button[id="serveCard"]');
+boutonServir.addEventListener('click', () => {
+  if (confirm('T\'en veux ? J\'en ai !')) {
+    let power = prompt('Quel puissance ?');
+    power = parseInt(power);
+    if (power > 1 && power < 16) putDomCard('♠', power);
+  }
+})
+
+const boutonTurn = document.querySelector('button[id="nextTurn"]');
+boutonTurn.addEventListener('click', nextTurn);
