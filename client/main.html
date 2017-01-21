@@ -4,13 +4,21 @@
 
 <body>
 
-<div class='carpet' id='carpet'>
-	<button id='clickme'>Commencer !</button>
-  <button id='addPlayer'>Ajouter un joueur</button>
-  <button id='serveCard'>T'en veux ?</button>
-  <button id='nextTurn'>Tour suivant</button>
-  
-  {{> card color=1 power=1}}
-</div>
+  <h1>Le jeu de la Vitrine</h1>
+  <div class='carpet' id='carpet'>
+  	<button id='clickme'>Commencer !</button>
+    <button id='addPlayer'>Ajouter un joueur</button>
+    <button id='serveCard'>T'en veux ?</button>
+    <button id='nextTurn'>Tour suivant</button>
+    
+    <!-- <div class='deck' id='deck'></div> -->
+    
+    <div class="current-player">
+      {{#if currentUser}}
+        {{> hand}}
+      {{else}}
+        {{> loginButtons}}
+      {{/if}}
+    </div>
+  </div>
 </body>
-

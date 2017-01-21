@@ -1,6 +1,7 @@
 import { Template } from 'meteor/templating'
 
-import { colors } from '../lib/rules.js';
+// note: on utilise directement le symbole ici
+// import { colors } from '../lib/rules.js';
 
 import './card.html';
 
@@ -30,7 +31,6 @@ export const generateDomCard = (color, power) => {
 
 Template.card.helpers({
     showCard() {
-        console.log(this.color);
-        return generateDomCard(colors[this.color], this.power);
+        return generateDomCard(this.color, this.power);
     },
 });

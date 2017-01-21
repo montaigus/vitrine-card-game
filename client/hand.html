@@ -1,0 +1,9 @@
+<template name="hand">
+  {{#if Template.subscriptionsReady}}
+    {{#each currentCard in playerHand}}
+      {{> card color=currentCard.color power=currentCard.power}}
+    {{/each}}
+  {{else}}
+    Chargement... <!-- les données ne sont pas encore arrivées chez le client -->
+  {{/if}}
+</template>
