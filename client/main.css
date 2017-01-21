@@ -1,6 +1,10 @@
 /* CSS declarations go here */
 /* Titre */
 
+body {
+	height: 100vh;	
+}
+
 h1 {
 	font-size : 70px;
 }
@@ -10,7 +14,7 @@ h1 {
 /* Tapis de jeu */
 .carpet {
 background-color: green;
-height: 600px;
+height: 90%;
 width : 90%;
 border-radius: 20px;
 position : relative;
@@ -42,7 +46,7 @@ padding: 20px;
     transition: 1 transform;
 }
 
-	.card.back { background-image: url(images/card_back.jpg); background-position: center; }
+	.card.back { background-image: url(/images/card_back.jpg); background-position: center; }
 	.card.flipped { -webkit-transform: rotateY(180deg); }
 	.card.heart, .card.diamond { color: red; }
 	.card.indeck {position :  relative; top : 50px; left : 50px;}
